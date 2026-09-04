@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz App - Question Engine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 550px;
+      margin: auto;
+    }
+
+    .card {
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .summary-box {
+      background-color: #f8f9fa;
+      border-left: 4px solid #007bff;
+      padding: 10px;
+      margin-top: 15px;
+    }
+
+    /* Timer Display Styling */
+    .timer-container {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #d9534f;
+      text-align: right;
+      margin-bottom: 15px;
+    }
+
+    /* Option Buttons List Styling */
+    .options-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .options-list li button {
+      background-color: #f0f0f0;
+      color: #333;
+      text-align: left;
+      margin-bottom: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .options-list li button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .options-list li button.selected {
+      background-color: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-view" class="card">
+    <h2>Welcome to QuizApp</h2>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Name:</label>
+        <input type="text" id="username" placeholder="Enter your name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role:</label>
+        <select id="role">
+          <option value="student">Student</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+
+      <button type="submit" id="login-btn">Login</button>
+    </form>
+  </div>
+
+  <!-- 2. STUDENT DASHBOARD & QUIZ SETUP -->
+  <div id="student-view" class="card hidden">
+    <h2>Student Dashboard</h2>
+    <p id="student-welcome-msg"></p>
+
+    <!-- Quiz Config Form -->
+    <form id="quiz-config-form">
+      <div class="form-group">
+        <label for="subject-select">Select Subject:</label>
+        <select id="subject-select">
+          <option value="JavaScript">JavaScript</option>
+          <option value="HTML/CSS">HTML/CSS</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="difficulty-select">Difficulty Level:</label>
+        <select id="difficulty-select">
+          <option value="Easy">Easy</option>
+          <option value="Intermediate">Intermediate</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="num-questions">Number of Questions:</label>
+        <input type="number" id="num-questions" min="1" max="5" value="2" required>
+      </div>
+
+      <div class="form-group">
+        <label for="time-limit">Time Limit (Minutes):</label>
+        <input type="number" id="time-limit" min="1" max="10" value="1" required>
+      </div>
+
+      <button type="submit" id="start-quiz-btn">Setup Quiz</button>
+    </form>
+
+    <!-- Configuration Summary Output -->
+    <div id="config-summary" class="summary-box hidden"></div>
+  </div>
+
+  <!-- 3. ACTIVE QUIZ ENGINE VIEW -->
+  <div id="quiz-view" class="card hidden">
+    <div class="timer-container">
+      Time Remaining: <span id="timer-display">00:00</span>
+    </div>
+
+    <h3 id="question-number">Question</h3>
+    <p id="question-text"></p>
+
+    <ul id="options-container" class="options-list"></ul>
+
+    <button id="next-btn" class="hidden">Next Question</button>
+  </div>
+
+  <!-- 4. ADMIN DASHBOARD PLACEHOLDER -->
+  <div id="admin-view" class="card hidden">
+    <h2>Admin Dashboard</h2>
+    <p id="admin-welcome-msg"></p>
+  </div>
+
+  <script>
+    // =========================================================
+    // SAMPLE QUESTION BANK DATA STRUCTURE
+    // =========================================================
+    const questionBank = [
+      {
+        id: 1,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "Which keyword is used to declare a block-scoped variable in modern JS?",
+        options: ["var", "let", "global", "make"],
+        correctAnswer: "let"
+      },
+      {
+        id: 2,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "What does DOM stand for?",
+        options: [
+          "Document Object Model",
+          "Data Object Manager",
+          "Digital Operation Module",
+          "Desktop Oriented Mode"
+        ],
+        correctAnswer: "Document Object Model"
+      },
+      {
+        id: 3,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "Which array method creates a new array with all elements that pass a test?",
+        options: ["forEach()", "map()", "filter()", "reduce()"],
+        correctAnswer: "filter()"
+      },
+      {
+        id: 4,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "Which HTML tag is used to attach an external JavaScript file?",
+        options: ["<script>", "<js>", "<javascript>", "<link>"],
+        correctAnswer: "<script>"
+      }
+    ];
+
+    // =========================================================
+    // GLOBAL APP STATE
+    // =========================================================
+    const quizConfig = {
+      subject: "",
+      difficulty: "",
+      questionCount: 0,
+      timeLimitMinutes: 0
+    };
+
+    let activeQuestions = [];
+    let currentQuestionIndex = 0;
+    let selectedAnswers = []; // Tracks user selections
+    let timerInterval = null;
+    let totalTimeInSeconds = 0;
+
+    // =========================================================
+    // COMPONENT 1: LOGIN LOGIC
+    // =========================================================
+    const loginForm = document.getElementById('login-form');
+    const usernameInput = document.getElementById('username');
+    const roleSelect = document.getElementById('role');
+    const loginView = document.getElementById('login-view');
+    const studentView = document.getElementById('student-view');
+    const adminView = document.getElementById('admin-view');
+    const studentWelcomeMsg = document.getElementById('student-welcome-msg');
+    const adminWelcomeMsg = document.getElementById('admin-welcome-msg');
+
+    loginForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const username = usernameInput.value;
+      const role = roleSelect.value;
+
+      loginView.classList.add('hidden');
+
+      if (role === 'student') {
+        studentView.classList.remove('hidden');
+        studentWelcomeMsg.textContent = "Hello, " + username + "! Configure your quiz preferences below:";
+      } else if (role === 'admin') {
+        adminView.classList.remove('hidden');
+        adminWelcomeMsg.textContent = "Welcome back, Admin " + username + "!";
+      }
+    });
+
+    // =========================================================
+    // COMPONENT 2: QUIZ CONFIGURATION ENGINE
+    // =========================================================
+    const quizConfigForm = document.getElementById('quiz-config-form');
+    const subjectSelect = document.getElementById('subject-select');
+    const difficultySelect = document.getElementById('difficulty-select');
+    const numQuestionsInput = document.getElementById('num-questions');
+    const timeLimitInput = document.getElementById('time-limit');
+    const configSummary = document.getElementById('config-summary');
+
+    quizConfigForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      quizConfig.subject = subjectSelect.value;
+      quizConfig.difficulty = difficultySelect.value;
+      quizConfig.questionCount = Number(numQuestionsInput.value);
+      quizConfig.timeLimitMinutes = Number(timeLimitInput.value);
+
+      quizConfigForm.classList.add('hidden');
+      configSummary.classList.remove('hidden');
+
+      configSummary.innerHTML = `
+        <h3>Ready to Begin!</h3>
+        <p><strong>Subject:</strong> ${quizConfig.subject}</p>
+        <p><strong>Difficulty:</strong> ${quizConfig.difficulty}</p>
+        <p><strong>Total Questions:</strong> ${quizConfig.questionCount}</p>
+        <p><strong>Time Limit:</strong> ${quizConfig.timeLimitMinutes} minute(s)</p>
+        <button id="confirm-start-btn">Start Test Now</button>
+      `;
+
+      // Attach event listener to dynamically created start button
+      document.getElementById('confirm-start-btn').addEventListener('click', startQuiz);
+    });
+
+    // =========================================================
+    // COMPONENT 3: QUESTION & TIMER ENGINE (5-STEP DOM PATTERN)
+    // =========================================================
+
+    // STEP 1: SELECT ELEMENTS
+    const quizView = document.getElementById('quiz-view');
+    const timerDisplay = document.getElementById('timer-display');
+    const questionNumberHeading = document.getElementById('question-number');
+    const questionTextPara = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Launch Quiz Engine
+    function startQuiz() {
+      // STEP 3 & 4: FILTER QUESTIONS BASED ON CONFIG
+      activeQuestions = questionBank.filter(function(q) {
+        return q.subject === quizConfig.subject && q.difficulty === quizConfig.difficulty;
+      });
+
+      // Cap question count based on user setup
+      activeQuestions = activeQuestions.slice(0, quizConfig.questionCount);
+
+      if (activeQuestions.length === 0) {
+        alert("No questions found matching your selected filters! Try another combination.");
+        location.reload();
+        return;
+      }
+
+      // Reset runtime variables
+      currentQuestionIndex = 0;
+      selectedAnswers = [];
+      totalTimeInSeconds = quizConfig.timeLimitMinutes * 60;
+
+      // STEP 5: UPDATE DOM TO SHOW QUIZ SCREEN
+      studentView.classList.add('hidden');
+      quizView.classList.remove('hidden');
+
+      startTimer();
+      renderQuestion();
+    }
+
+    // Timer Logic
+    function startTimer() {
+      updateTimerDisplay();
+
+      timerInterval = setInterval(function() {
+        totalTimeInSeconds--;
+        updateTimerDisplay();
+
+        if (totalTimeInSeconds <= 0) {
+          clearInterval(timerInterval);
+          alert("Time is up! Auto-submitting your quiz.");
+          finishQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(totalTimeInSeconds / 60);
+      const seconds = totalTimeInSeconds % 60;
+      
+      // Formatting time to padded 00:00 format
+      const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+      const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+      timerDisplay.textContent = `${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    // Render Current Question
+    function renderQuestion() {
+      const currentQ = activeQuestions[currentQuestionIndex];
+
+      // STEP 5: UPDATE THE DOM
+      questionNumberHeading.textContent = `Question ${currentQuestionIndex + 1} of ${activeQuestions.length}`;
+      questionTextPara.textContent = currentQ.question;
+
+      // Clear previous options
+      optionsContainer.innerHTML = "";
+      nextBtn.classList.add('hidden');
+
+      // Loop through options and create choice buttons dynamically
+      currentQ.options.forEach(function(optionText) {
+        const li = document.createElement('li');
+        const optionBtn = document.createElement('button');
+
+        optionBtn.textContent = optionText;
+
+        // STEP 2: ADD EVENT LISTENER TO DYNAMICALLY CREATED BUTTON
+        optionBtn.addEventListener('click', function() {
+          selectOption(optionText, optionBtn);
+        });
+
+        li.appendChild(optionBtn);
+        optionsContainer.appendChild(li);
+      });
+    }
+
+    // Handle Option Selection
+    function selectOption(selectedText, clickedBtn) {
+      // Remove selected styling from all buttons
+      const buttons = optionsContainer.querySelectorAll('button');
+      buttons.forEach(function(btn) {
+        btn.classList.remove('selected');
+      });
+
+      // Highlight clicked button
+      clickedBtn.classList.add('selected');
+
+      // Save user response
+      selectedAnswers[currentQuestionIndex] = selectedText;
+
+      // Show Next/Submit button once an option is picked
+      nextBtn.classList.remove('hidden');
+      if (currentQuestionIndex === activeQuestions.length - 1) {
+        nextBtn.textContent = "Submit Quiz";
+      } else {
+        nextBtn.textContent = "Next Question";
+      }
+    }
+
+    // STEP 2: EVENT LISTENER FOR NEXT / SUBMIT BUTTON
+    nextBtn.addEventListener('click', function() {
+      if (currentQuestionIndex < activeQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion();
+      } else {
+        finishQuiz();
+      }
+    });
+
+    function finishQuiz() {
+      clearInterval(timerInterval);
+      alert("Quiz Completed! Next component will calculate score.");
+    }
+  </script>
+</body>
+</html>
