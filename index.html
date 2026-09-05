@@ -140,12 +140,12 @@
 
       <div class="form-group">
         <label for="num-questions">Number of Questions:</label>
-        <input type="number" id="num-questions" min="1" max="5" value="2" required>
+        <input type="number" id="num-questions" min="1" max="10" value="5" required>
       </div>
 
       <div class="form-group">
         <label for="time-limit">Time Limit (Minutes):</label>
-        <input type="number" id="time-limit" min="1" max="10" value="1" required>
+        <input type="number" id="time-limit" min="1" max="10" value="2" required>
       </div>
 
       <button type="submit" id="start-quiz-btn">Setup Quiz</button>
@@ -177,9 +177,10 @@
 
   <script>
     // =========================================================
-    // SAMPLE QUESTION BANK DATA STRUCTURE
+    // EXPANDED QUESTION BANK DATA STRUCTURE (32 QUESTIONS TOTAL)
     // =========================================================
     const questionBank = [
+      // ----------------- JAVASCRIPT: EASY (8 Questions) -----------------
       {
         id: 1,
         subject: "JavaScript",
@@ -204,18 +205,298 @@
       {
         id: 3,
         subject: "JavaScript",
+        difficulty: "Easy",
+        question: "Which data type is NOT primitive in JavaScript?",
+        options: ["String", "Boolean", "Object", "Number"],
+        correctAnswer: "Object"
+      },
+      {
+        id: 4,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "How do you write 'Hello World' in an alert box?",
+        options: [
+          "msg('Hello World');",
+          "alertBox('Hello World');",
+          "alert('Hello World');",
+          "console.log('Hello World');"
+        ],
+        correctAnswer: "alert('Hello World');"
+      },
+      {
+        id: 5,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "What is the correct syntax for creating a function in JavaScript?",
+        options: [
+          "function = myFunction()",
+          "function myFunction()",
+          "create myFunction()",
+          "def myFunction()"
+        ],
+        correctAnswer: "function myFunction()"
+      },
+      {
+        id: 6,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "How do you write an IF statement in JavaScript?",
+        options: [
+          "if i = 5 then",
+          "if (i == 5)",
+          "if i == 5 then",
+          "if i = 5"
+        ],
+        correctAnswer: "if (i == 5)"
+      },
+      {
+        id: 7,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "Which operator is used to assign a value to a variable?",
+        options: ["=", "*", "-", "=="],
+        correctAnswer: "="
+      },
+      {
+        id: 8,
+        subject: "JavaScript",
+        difficulty: "Easy",
+        question: "What will `typeof []` return in JavaScript?",
+        options: ["array", "object", "list", "undefined"],
+        correctAnswer: "object"
+      },
+
+      // ----------------- JAVASCRIPT: INTERMEDIATE (8 Questions) -----------------
+      {
+        id: 9,
+        subject: "JavaScript",
         difficulty: "Intermediate",
         question: "Which array method creates a new array with all elements that pass a test?",
         options: ["forEach()", "map()", "filter()", "reduce()"],
         correctAnswer: "filter()"
       },
       {
-        id: 4,
+        id: 10,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "What is the main benefit of using Promises in JavaScript?",
+        options: [
+          "Prevents block scoping",
+          "Handles asynchronous operations cleanly",
+          "Increases execution speed",
+          "Automatically updates the DOM"
+        ],
+        correctAnswer: "Handles asynchronous operations cleanly"
+      },
+      {
+        id: 11,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "What is the output of `console.log(typeof NaN)`?",
+        options: ["number", "NaN", "undefined", "object"],
+        correctAnswer: "number"
+      },
+      {
+        id: 12,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "Which concept allows inner functions to access outer scope variables even after the outer function has executed?",
+        options: ["Hoisting", "Closure", "Recursion", "Currying"],
+        correctAnswer: "Closure"
+      },
+      {
+        id: 13,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "What does the strict equality operator (`===`) check?",
+        options: [
+          "Value only",
+          "Type only",
+          "Both value and type",
+          "Memory address only"
+        ],
+        correctAnswer: "Both value and type"
+      },
+      {
+        id: 14,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "Which method converts a JSON string into a JavaScript object?",
+        options: [
+          "JSON.stringify()",
+          "JSON.parse()",
+          "JSON.toObject()",
+          "Object.parse()"
+        ],
+        correctAnswer: "JSON.parse()"
+      },
+      {
+        id: 15,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "How do you stop event propagation (bubbling) in JavaScript?",
+        options: [
+          "event.preventDefault()",
+          "event.stopPropagation()",
+          "event.stop()",
+          "return false;"
+        ],
+        correctAnswer: "event.stopPropagation()"
+      },
+      {
+        id: 16,
+        subject: "JavaScript",
+        difficulty: "Intermediate",
+        question: "What keyword is used to pause the execution inside an `async` function until a Promise settles?",
+        options: ["pause", "wait", "await", "defer"],
+        correctAnswer: "await"
+      },
+
+      // ----------------- HTML/CSS: EASY (8 Questions) -----------------
+      {
+        id: 17,
         subject: "HTML/CSS",
         difficulty: "Easy",
         question: "Which HTML tag is used to attach an external JavaScript file?",
         options: ["<script>", "<js>", "<javascript>", "<link>"],
         correctAnswer: "<script>"
+      },
+      {
+        id: 18,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "What does HTML stand for?",
+        options: [
+          "Hyper Text Markup Language",
+          "High Tech Modern Language",
+          "Hyper Transfer Text Language",
+          "Home Tool Markup Language"
+        ],
+        correctAnswer: "Hyper Text Markup Language"
+      },
+      {
+        id: 19,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "Which CSS property is used to change the text color of an element?",
+        options: ["font-color", "color", "text-color", "background-color"],
+        correctAnswer: "color"
+      },
+      {
+        id: 20,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "Which tag is used to create a hyperlink in HTML?",
+        options: ["<a>", "<link>", "<href>", "<url>"],
+        correctAnswer: "<a>"
+      },
+      {
+        id: 21,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "How do you select an element with `id='header'` in CSS?",
+        options: [".header", "#header", "header", "*header"],
+        correctAnswer: "#header"
+      },
+      {
+        id: 22,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "Which CSS property controls the text size?",
+        options: ["font-size", "text-size", "font-style", "size"],
+        correctAnswer: "font-size"
+      },
+      {
+        id: 23,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "Which HTML attribute is used to define inline styles?",
+        options: ["class", "styles", "style", "font"],
+        correctAnswer: "style"
+      },
+      {
+        id: 24,
+        subject: "HTML/CSS",
+        difficulty: "Easy",
+        question: "What is the correct HTML element for inserting a line break?",
+        options: ["<break>", "<lb>", "<br>", "<hr>"],
+        correctAnswer: "<br>"
+      },
+
+      // ----------------- HTML/CSS: INTERMEDIATE (8 Questions) -----------------
+      {
+        id: 25,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "In the CSS Box Model, which layer is immediately inside the border?",
+        options: ["Margin", "Padding", "Content", "Outline"],
+        correctAnswer: "Padding"
+      },
+      {
+        id: 26,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "Which CSS layout method is best suited for 2D layouts (rows AND columns)?",
+        options: ["Flexbox", "CSS Grid", "Float", "Inline-block"],
+        correctAnswer: "CSS Grid"
+      },
+      {
+        id: 27,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "Which CSS unit is relative to the root element's font size (`<html>`)?",
+        options: ["em", "rem", "vh", "px"],
+        correctAnswer: "rem"
+      },
+      {
+        id: 28,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "What does `box-sizing: border-box;` do?",
+        options: [
+          "Adds a shadow around borders",
+          "Includes padding and border in the total width and height",
+          "Removes margins from block elements",
+          "Forces borders to render inside image content"
+        ],
+        correctAnswer: "Includes padding and border in the total width and height"
+      },
+      {
+        id: 29,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "Which selector has the highest CSS specificity?",
+        options: ["#header (ID)", ".nav-link (Class)", "div (Tag)", "* (Universal)"],
+        correctAnswer: "#header (ID)"
+      },
+      {
+        id: 30,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "Which CSS property is used to stack elements along the z-axis?",
+        options: ["order", "z-index", "elevation", "position-depth"],
+        correctAnswer: "z-index"
+      },
+      {
+        id: 31,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "How do you apply a style only when the screen width is 600px or smaller?",
+        options: [
+          "@media (max-width: 600px) { ... }",
+          "@screen (width < 600px) { ... }",
+          "@device (max-size: 600px) { ... }",
+          "@media (min-width: 600px) { ... }"
+        ],
+        correctAnswer: "@media (max-width: 600px) { ... }"
+      },
+      {
+        id: 32,
+        subject: "HTML/CSS",
+        difficulty: "Intermediate",
+        question: "Which pseudo-class applies when a user hovers over an element with their pointer?",
+        options: [":active", ":focus", ":hover", ":visited"],
+        correctAnswer: ":hover"
       }
     ];
 
